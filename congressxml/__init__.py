@@ -124,7 +124,11 @@ def create_link_url(xml_element):
 			entity_proposed = True if ( xml_element.get("proposed", "false") == "true" ) else False
 
 			if entity_value is not None:
-				citation = citations.deepbills_citation_for(entity_type, entity_value, xml_element.text, entity_proposed)
+				try:
+					citation = citations.deepbills_citation_for(entity_type, entity_value, xml_element.text, entity_proposed)
+				except:
+					# silently ignore format errors so that we can display the rest as HTML
+					return None
 
 				if citation["type"] == "uscode":
 					link_url = url_for_us_code(citation)
@@ -146,7 +150,11 @@ def create_link_url(xml_element):
 			if legal_doc == "usc":
 				legal_doc = "uscode"
 
-			citation = citations.deepbills_citation_for(legal_doc, parsable_cite, xml_element.text)
+			try:
+				citation = citations.deepbills_citation_for(legal_doc, parsable_cite, xml_element.text)
+			except:
+				# silently ignore format errors so that we can display the rest as HTML
+				return None
 
 #			if citation["type"] == "usc":
 			if citation["type"] == "uscode":
@@ -209,18 +217,15 @@ def convert_element(xml_element, url_fn=create_link_url):
 		xml_tag_name = xml_tag[len(catoxml_ns):]
 		html_attributes["class"][html_attributes["class"].index(xml_tag)] = xml_tag_name
 
+		html_tag = "span"
 		if xml_tag_name in [ "entity-ref" ]:
 			# We aren't allowed to have nested links.
 			if can_be_link(xml_element):
-				html_tag = "a"
 
 				href = url_fn(xml_element)
 				if href:
+					html_tag = "a"
 					html_attributes["href"] = href
-			else:
-				html_tag = "span"
-		else:
-			html_tag = "span"
 	else:
 		# Sections
 		if xml_tag in [ "bill", "resolution", "amendment-doc" ]:
@@ -257,20 +262,18 @@ def convert_element(xml_element, url_fn=create_link_url):
 		# Text-level semantics
 		elif xml_tag in [ "external-xref", "internal-xref", "footnone-ref" ]:
 			# We aren't allowed to have nested links.
+			html_tag = "span"
 			if can_be_link(xml_element):
-				html_tag = "a"
-
 				href = url_fn(xml_element)
 				if href:
+					html_tag = "a"
 					html_attributes["href"] = href
 
-				if xml_tag in [ "external-xref" ]:
-					if "rel" not in html_attributes:
-						html_attributes["rel"] = []
-
-					html_attributes["rel"].append("external")
-			else:
-				html_tag = "span"
+					if xml_tag in [ "external-xref" ]:
+						if "rel" not in html_attributes:
+							html_attributes["rel"] = []
+	
+						html_attributes["rel"].append("external")
 		elif xml_tag in [ "quote" ]:
 			html_tag = "q"
 		elif xml_tag in [ "term" ]:
