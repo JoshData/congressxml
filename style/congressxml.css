@@ -538,6 +538,9 @@ span.enum + p.text {
 	display: inline;
 }
 
+q.quote {
+	quotes: "“" "”" "‘" "’";
+}
 q.quote::before {
 	content: open-quote;
 }
