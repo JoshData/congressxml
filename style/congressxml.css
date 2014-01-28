@@ -1,11 +1,11 @@
 /*** GLOBAL DEFAULTS **/
 
-a:link, a:visited {
+article a:link, article a:visited {
 	text-decoration: none;
 	border-bottom: 1px dotted #d63;
 }
 
-a:hover, a:focus, a:active {
+article a:hover, article a:focus, article a:active {
 	color: #d63;
 	text-decoration: none;
 	border-bottom: 1px dotted #cb4b16;
