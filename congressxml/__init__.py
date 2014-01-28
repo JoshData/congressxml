@@ -207,6 +207,7 @@ def can_be_link(xml_element):
 
 def convert_element(xml_element, url_fn=create_link_url):
 	xml_tag = xml_element.tag
+	wrap_children = False
 
 	html_attributes = { "class": [ xml_tag ] }
 
@@ -236,10 +237,16 @@ def convert_element(xml_element, url_fn=create_link_url):
 			section_id = xml_element.get("id")
 			if section_id:
 				html_attributes["id"] = "section_%s" % ( section_id )
-		elif xml_tag in [ "header", "ttitle" ]:
-			html_tag = "h1"
-		elif xml_tag in [ "subheader", "rules-clause-header" ]:
-			html_tag = "h2"
+
+			if xml_tag in ('division', 'subdivision', 'title', 'subtitle', 'chapter', 'subchapter', 'part', 'subpart'):
+				html_attributes["class"].append("big-level")
+			if xml_tag in ('subsection', 'paragraph', 'subparagraph', 'clause', 'subclause'):
+				html_attributes["class"].append("little-level")
+			if xml_tag in ('quoted-block',):
+				wrap_children = True
+
+		elif xml_tag in [ "header", "title", "subheader", "rules-clause-header" ]:
+			html_tag = "p"
 
 		# Grouping content
 		elif xml_tag in [ "distribution-code", "amend-num", "calendar", "purpose", "current-chamber", "congress", "session", "legis-num", "official-title", "enrolled-dateline", "associated-doc", "action-date", "action-desc", "action-instruction", "legis-type", "official-title-amendment", "text", "attestation-date", "attestor", "proxy", "role", "amendment-instruction", "para", "instructive-para", "graphic", "formula", "toc-entry", "quoted-block-continuation-text", "after-quoted-block", "tdesc" ]:
@@ -341,17 +348,23 @@ def convert_element(xml_element, url_fn=create_link_url):
 
 	html_element.tail = "" if xml_element.tail is None else xml_element.tail
 
-	return html_element
+	return html_element, wrap_children
 
 def build_html_tree(node, url_fn=create_link_url):
-	html_tree = convert_element(node, url_fn)
+	html_tree, wrap_children = convert_element(node, url_fn)
 
 	for xml_element in node.getchildren():
 		# Ignore certain subtrees and processing instructions
 		if xml_element.tag in [ "metadata" ] or not isinstance(xml_element.tag, basestring):
 			continue
 
-		html_tree.append(build_html_tree(xml_element))
+		html_child = build_html_tree(xml_element)
+		if not wrap_children:
+			html_tree.append(html_child)
+		else:
+			wrapper_element = etree.Element("div", attrib={"class": "wrapper"})
+			wrapper_element.append(html_child)
+			html_tree.append(wrapper_element)
 
 	return html_tree
 
