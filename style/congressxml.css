@@ -29,7 +29,7 @@ article {
 	padding: 1%;
 }
 
-article p {
+article p, #content article p {
 	margin-top: 1em;
 	margin-bottom: 1em;
 }
@@ -299,6 +299,7 @@ section.little-level {
 }
 section.little-level > span.enum {
 	margin-left: -1.5em;
+	margin-right: .25em;
 }
 section.little-level > span.enum + p.header {
 	margin-left: 0.125em;
@@ -351,12 +352,18 @@ section.toc {
 	font-size: smaller;
 	text-align: left;
 }
+	.quoted-block section.toc {
+		margin: 0;
+		border: none;
+		padding: 0;
+		font-size: inherit;
+	}
 
 p.toc-entry[data-level="title"] {
 	text-align: center;
 }
 
-p.toc-entry[data-level="section"] {
+p.toc-entry[data-level="section"], #content article p.toc-entry[data-level="section"] {
 	margin: 0em;
 }
 
