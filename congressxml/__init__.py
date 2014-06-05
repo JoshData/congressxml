@@ -372,8 +372,16 @@ def build_html_tree(node, url_fn=create_link_url):
 def convert_xml(xml_file_path, url_fn=create_link_url):
 	xml_tree = etree.parse(xml_file_path, etree.XMLParser(recover=True))
 
+	from permalink import add_permalink_attributes
+	add_permalink_attributes(xml_tree.getroot())
+
 	return etree.ElementTree(build_html_tree(xml_tree.getroot(), url_fn))
 
 # XXX: Is this even necessary? You can just call the write() method on the output of convert_xml()...
 def write_html(html_tree, html_file_path):
 	return html_tree.write(html_file_path)
+
+if __name__ == "__main__":
+	import sys
+	xml_tree = convert_xml(sys.argv[1])
+	print(etree.tostring(xml_tree))
