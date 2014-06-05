@@ -101,6 +101,7 @@ def url_for_act(citation):
 		# XXX: We should probably support same-page URLs for these.
 		return None
 
+	return None # the link below is not useful
 	try:
 		url = "https://www.govtrack.us/congress/bills/browse?congress=__ALL__&sort=relevance&text=%s" % ( citation["act"] )
 	except KeyError:
