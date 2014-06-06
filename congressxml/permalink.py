@@ -42,7 +42,7 @@ def add_permalink_attributes(node, path=[]):
 		add_permalink_attributes(child, p)
 
 def get_targets(node, targets):
-	if node.find("enum") is not None:
+	if node.find("enum") is not None and node.find("enum").text not in (None, ""):
 		# If this node has an <enum> child, then this
 		# node is targettable.
 		targets.append((node, True, re.sub("[^0-9A-Za-z\-]", "", node.find("enum").text)))
