@@ -118,7 +118,7 @@ section.form {
 	text-align: center;
 }
 
-p.distribution-code, p.calendar, p.congress, p.session {
+p.distribution-code, p.calendar, p.congress, p.session, p.enrolled-dateline {
 	/* rendered light because it is not useful info */
 	margin: 0 !important;
 	font-size: 85%;
