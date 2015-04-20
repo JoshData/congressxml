@@ -27,7 +27,7 @@ def add_permalink_attributes(node, path=[]):
 			if len(nodes) == 1:
 				c = enum
 			else:
-				c = enum + ("^%d" % (i+1))
+				c = enum + ("~%d" % (i+1))
 			p = path + [c]
 			n.set('citation-path', "_".join(p))
 			add_permalink_attributes(n, p)
@@ -48,7 +48,7 @@ def get_targets(node, targets):
 		targets.append((node, True, re.sub("[^0-9A-Za-z\-]", "", node.find("enum").text)))
 	elif node.tag in ("text", "quoted-block"):
 		# <text> nodes are targettable.
-		targets.append((node, False, "^" + node.tag[0].upper() ))
+		targets.append((node, False, "~" + node.tag[0].upper() ))
 	else:
 		# look for targettable children
 		for child in node:
