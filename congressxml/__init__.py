@@ -372,9 +372,24 @@ def build_html_tree(node, url_fn=create_link_url):
 def convert_xml(xml_file_path, url_fn=create_link_url):
 	xml_tree = etree.parse(xml_file_path, etree.XMLParser(recover=True))
 
+	# if this is a strike-all-after-the-enacting-clause-and-insert sort of bill, then make it easier to
+	# read by removing the striked portion and un-marking the inserted portion as inserted so that we
+	# do not display the whole bill in italic.
+	for legis_body in xml_tree.findall("legis-body"):
+		if legis_body.get("changed") == "added":
+			del legis_body.attrib["changed"]
+		elif legis_body.get("changed") == "deleted":
+			legis_body.getparent().remove(legis_body)
+
+		# Also remove any styles applied to the whole thing.
+		if legis_body.get("reported-display-style"):
+			del legis_body.attrib["reported-display-style"]
+
+	# Add permalinks to citations.
 	from permalink import add_permalink_attributes
 	add_permalink_attributes(xml_tree.getroot())
 
+	# Convert to HTML.
 	return etree.ElementTree(build_html_tree(xml_tree.getroot(), url_fn))
 
 # XXX: Is this even necessary? You can just call the write() method on the output of convert_xml()...
