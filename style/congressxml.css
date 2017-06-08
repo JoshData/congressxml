@@ -361,6 +361,11 @@ section.toc {
 
 p.toc-entry[data-level="title"] {
 	text-align: center;
+	font-size: 115%;
+	font-weight: bold;
+}
+p.toc-entry[data-level="subtitle"] {
+	font-weight: bold;
 }
 
 p.toc-entry[data-level="section"], #content article p.toc-entry[data-level="section"] {
