@@ -110,7 +110,7 @@ def url_for_act(citation):
 	return url
 
 def create_link_url(xml_element):
-	import citations
+	from . import citations
 
 	link_url = None
 
@@ -356,7 +356,7 @@ def build_html_tree(node, url_fn=create_link_url):
 
 	for xml_element in node.getchildren():
 		# Ignore certain subtrees and processing instructions
-		if xml_element.tag in [ "metadata" ] or not isinstance(xml_element.tag, basestring):
+		if xml_element.tag in [ "metadata" ] or not isinstance(xml_element.tag, str):
 			continue
 
 		html_child = build_html_tree(xml_element)
@@ -386,7 +386,7 @@ def convert_xml(xml_file_path, url_fn=create_link_url):
 			del legis_body.attrib["reported-display-style"]
 
 	# Add permalinks to citations.
-	from permalink import add_permalink_attributes
+	from .permalink import add_permalink_attributes
 	add_permalink_attributes(xml_tree.getroot())
 
 	# Convert to HTML.
